@@ -42,8 +42,12 @@ type CacheRetentionStreamOptions = Partial<SimpleStreamOptions> & {
 function resolveCacheRetention(
   extraParams: Record<string, unknown> | undefined,
   provider: string,
+  modelId?: string,
 ): CacheRetention | undefined {
-  if (provider !== "anthropic") {
+  // Only Anthropic provider and LiteLLM proxying Claude models support cacheRetention
+  const isAnthropicProvider = provider === "anthropic";
+  const isLitellmClaude = provider === "litellm" && modelId?.toLowerCase().startsWith("claude-");
+  if (!isAnthropicProvider && !isLitellmClaude) {
     return undefined;
   }
 
