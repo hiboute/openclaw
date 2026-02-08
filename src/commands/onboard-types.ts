@@ -36,6 +36,8 @@ export type AuthChoice =
   | "github-copilot"
   | "copilot-proxy"
   | "qwen-portal"
+  | "xai-api-key"
+  | "qianfan-api-key"
   | "skip";
 export type GatewayAuthChoice = "token" | "password";
 export type ResetScope = "config" | "config+creds+sessions" | "full";
@@ -83,6 +85,8 @@ export type OnboardOptions = {
   litellmApiKey?: string;
   litellmBaseUrl?: string;
   litellmModel?: string;
+  xaiApiKey?: string;
+  qianfanApiKey?: string;
   gatewayPort?: number;
   gatewayBind?: GatewayBind;
   gatewayAuth?: GatewayAuthChoice;
