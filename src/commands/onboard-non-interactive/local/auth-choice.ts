@@ -1,3 +1,6 @@
+import type { OpenClawConfig } from "../../../config/config.js";
+import type { RuntimeEnv } from "../../../runtime.js";
+import type { AuthChoice, OnboardOptions } from "../../onboard-types.js";
 import { upsertAuthProfile } from "../../../agents/auth-profiles.js";
 import { normalizeProviderId } from "../../../agents/model-selection.js";
 import { parseDurationMs } from "../../../cli/parse-duration.js";
@@ -63,7 +66,6 @@ import {
   parseNonInteractiveCustomApiFlags,
   resolveCustomProviderId,
 } from "../../onboard-custom.js";
-import type { AuthChoice, OnboardOptions } from "../../onboard-types.js";
 import { applyOpenAIConfig } from "../../openai-model-default.js";
 import { detectZaiEndpoint } from "../../zai-endpoint-detect.js";
 import { resolveNonInteractiveApiKey } from "../api-keys.js";
@@ -602,7 +604,10 @@ export async function applyNonInteractiveAuthChoice(params: {
       provider: "litellm",
       mode: "api_key",
     });
-    return applyLitellmConfig(nextConfig);
+    return applyLitellmConfig(nextConfig, {
+      baseUrl: opts.litellmBaseUrl?.trim() || "http://localhost:4000",
+      modelId: opts.litellmModel?.trim() || "gpt-4",
+    });
   }
 
   if (authChoice === "ai-gateway-api-key") {

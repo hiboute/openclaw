@@ -57,6 +57,7 @@ type CacheRetentionStreamOptions = Partial<SimpleStreamOptions> & {
  * Applies to:
  * - direct Anthropic provider
  * - Anthropic Claude models on Bedrock when cache retention is explicitly configured
+ * - LiteLLM with claude- models
  *
  * OpenRouter uses openai-completions API with hardcoded cache_control instead
  * of the cacheRetention stream option.
@@ -66,13 +67,15 @@ type CacheRetentionStreamOptions = Partial<SimpleStreamOptions> & {
 function resolveCacheRetention(
   extraParams: Record<string, unknown> | undefined,
   provider: string,
+  modelId: string,
 ): CacheRetention | undefined {
   const isAnthropicDirect = provider === "anthropic";
   const hasBedrockOverride =
     extraParams?.cacheRetention !== undefined || extraParams?.cacheControlTtl !== undefined;
   const isAnthropicBedrock = provider === "amazon-bedrock" && hasBedrockOverride;
+  const isLitellmClaude = provider === "litellm" && modelId.toLowerCase().startsWith("claude-");
 
-  if (!isAnthropicDirect && !isAnthropicBedrock) {
+  if (!isAnthropicDirect && !isAnthropicBedrock && !isLitellmClaude) {
     return undefined;
   }
 
@@ -105,6 +108,7 @@ function createStreamFnWithExtraParams(
   baseStreamFn: StreamFn | undefined,
   extraParams: Record<string, unknown> | undefined,
   provider: string,
+  modelId: string,
 ): StreamFn | undefined {
   if (!extraParams || Object.keys(extraParams).length === 0) {
     return undefined;
@@ -124,7 +128,7 @@ function createStreamFnWithExtraParams(
     const transportSummary = typeof transport === "string" ? transport : typeof transport;
     log.warn(`ignoring invalid transport param: ${transportSummary}`);
   }
-  const cacheRetention = resolveCacheRetention(extraParams, provider);
+  const cacheRetention = resolveCacheRetention(extraParams, provider, modelId);
   if (cacheRetention) {
     streamParams.cacheRetention = cacheRetention;
   }
@@ -748,7 +752,7 @@ export function applyExtraParamsToAgent(
         )
       : undefined;
   const merged = Object.assign({}, extraParams, override);
-  const wrappedStreamFn = createStreamFnWithExtraParams(agent.streamFn, merged, provider);
+  const wrappedStreamFn = createStreamFnWithExtraParams(agent.streamFn, merged, provider, modelId);
 
   if (wrappedStreamFn) {
     log.debug(`applying extraParams to agent streamFn for ${provider}/${modelId}`);
