@@ -46,6 +46,7 @@ import { normalizeConfigPaths } from "./normalize-paths.js";
 import { resolveConfigPath, resolveDefaultConfigCandidates, resolveStateDir } from "./paths.js";
 import { isBlockedObjectKey } from "./prototype-keys.js";
 import { applyConfigOverrides } from "./runtime-overrides.js";
+import type { OpenClawConfig, ConfigFileSnapshot, LegacyConfigIssue } from "./types.js";
 import {
   validateConfigObjectRawWithPlugins,
   validateConfigObjectWithPlugins,
