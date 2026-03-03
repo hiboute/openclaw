@@ -14,7 +14,6 @@ import { applyAuthChoiceQwenPortal } from "./auth-choice.apply.qwen-portal.js";
 import { applyAuthChoiceVllm } from "./auth-choice.apply.vllm.js";
 import { applyAuthChoiceVolcengine } from "./auth-choice.apply.volcengine.js";
 import { applyAuthChoiceXAI } from "./auth-choice.apply.xai.js";
-import type { AuthChoice } from "./onboard-types.js";
 import type { AuthChoice, OnboardOptions } from "./onboard-types.js";
 
 export type ApplyAuthChoiceParams = {
