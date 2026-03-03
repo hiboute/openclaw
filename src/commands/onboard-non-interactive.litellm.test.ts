@@ -30,10 +30,10 @@ describe("onboard (non-interactive): LiteLLM", () => {
     process.env.OPENCLAW_CONFIG_PATH = path.join(tempHome, "openclaw.json");
     vi.resetModules();
 
-    const runtime = {
+    const runtime: import("../runtime.js").RuntimeEnv = {
       log: () => {},
-      error: (msg: string) => {
-        throw new Error(msg);
+      error: (...args: unknown[]) => {
+        throw new Error(String(args[0]));
       },
       exit: (code: number) => {
         throw new Error(`exit:${code}`);
